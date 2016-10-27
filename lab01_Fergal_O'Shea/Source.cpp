@@ -1,3 +1,7 @@
+//Fergal O'Shea
+//2016
+//Double Hashing
+
 #include <stdio.h> 
 #include <string.h> 
 #include <cmath>
@@ -41,10 +45,10 @@ int main() {
 		"prince adam", "orko", "cringer", "teela", "aleet", "princess adora", "orko", "jimmy"
 	};
 
-	printf(
-		"             key      table index\n-----------------------------------\n");
+	printf("             key      table index\tprobes\n----------------------------------------------\n");
 
 	for (int i = 0; i < NUM_TEST_KEYS; i++) {
+		int probes = 1;
 		int index = hash_function(test_strings[i], HASH_TABLE_SIZE_M);
 
 		if (hash_table[index][0] == 0) {
@@ -54,16 +58,20 @@ int main() {
 		else {
 
 			int increment= re_hash_function(test_strings[i], HASH_TABLE_SIZE_M) % HASH_TABLE_SIZE_M;
+			probes++;
 			index = (index + i*increment) % (HASH_TABLE_SIZE_M);
 
 			while (hash_table[index][0] != 0) {
 				index = (index + i*increment) % (HASH_TABLE_SIZE_M);
+				probes++;
 			}
 			strcpy_s(hash_table[index],test_strings[i]);
 		}
 		
-		printf("%16s %6i\n", test_strings[i], index);
+		printf("%16s %6i\t\t\t%i\n", test_strings[i], index, probes);
 	}
+
+	printf("\nslot\tname\n--------------\n");
 
 	for (int i = 0; i < HASH_TABLE_SIZE_M; i++) {
 		printf("%i\t%s\n",i, hash_table[i]);
@@ -72,6 +80,19 @@ int main() {
 	//
 	// calculate table load here
 	//
+	int ocupied = 0;
+	double load = 0;
+
+	for (int i = 0; i < HASH_TABLE_SIZE_M; i++) {
+		if (hash_table[i][0] != 0) {
+			ocupied++;
+		}
+	}
+
+	load = double(ocupied) / double(HASH_TABLE_SIZE_M);
+
+	printf("\ntable load: \nspaces available: \t %i \nspaces used: \t\t %i \nload: \t\t\t %f", HASH_TABLE_SIZE_M, ocupied, load);
+
 	int stop;
 	cin >> stop;
 	return 0;
